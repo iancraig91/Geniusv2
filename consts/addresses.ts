@@ -1,0 +1,1 @@
+export const GENIUS_NFT = "0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D"
