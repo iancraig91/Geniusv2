@@ -39,6 +39,7 @@ export default function MintButton() {
 
     const { data: data } = useUnclaimedNFTSupply(nftMint)
     const { data: data2 } = useClaimedNFTSupply(nftMint)
+    const { data: ownedNfts } = useOwnedNFTs(nftMint, address)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -119,11 +120,17 @@ export default function MintButton() {
         <VStack maxW={"100%"}>
             <Heading textColor={"black"} >{data && data2 ? `${(Number(data2))?.toString()}/6969` : <Spinner />}</Heading>
             {userPrice === 0 ?
+                 (ownedNfts && ownedNfts.length >= freeClaims ?
+
+                <VStack>
+                    <Text>You have all ready claimed {freeClaims} For Free!</Text>
+                </VStack>
+:
                 <VStack>
                     <Text>Mint {freeClaims} For Free!</Text>
                     <Button size={"lg"} bgGradient="linear(to-l, white, #fbdb4c)" textAlign={"center"} border={"2px"} borderColor={"black"} p={4} borderRadius={"xl"} onClick={mint} isLoading={minting}>{minting ? "Minting now" : `Mint ${freeClaims} NFT${freeClaims > 1 ? "'s" : ""} now!`}</Button>
                 </VStack>
-
+)
                 :
 
                 <VStack>
