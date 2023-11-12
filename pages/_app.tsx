@@ -12,8 +12,24 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <ThirdwebProvider
-      clientId={process.env.TW_CLIENT_ID!}
-      activeChain={Cronos}
+      clientId={"b4d54b735986cb705e56428c941eac40"}
+      activeChain={{
+        chainId: 25,
+        rpc: [
+          "https://rpc.vvs.finance/",
+          "https://rpc.crodex.app/",
+        ],
+        nativeCurrency: {
+          decimals: 18,
+          name: "Cronos",
+          symbol: "CRO",
+        },
+        shortName: "CRO",
+        slug: "Cronos",
+        testnet: false,
+        chain: "Cronos Mainnet",
+        name: "Cronos Mainnet", // Name of the network
+      }}
       dAppMeta={{
         name: "Genius Mint Dapp",
         description: "Make a wish, maybe the genies will grant it",
