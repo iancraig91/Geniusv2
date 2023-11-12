@@ -54,6 +54,7 @@ export default function MintButton() {
                         setUserPrice(69)
                     } else if (claimerProofs && claimerProofs?.price) {
                         setUserPrice(Number(claimerProofs?.price))
+                        setFreeClaims(Number(claimerProofs?.maxClaimable))
                     } else if (claimerProofs && claimerProofs?.maxClaimable) {
                         setUserPrice(Number(0))
                         setFreeClaims(Number(claimerProofs?.maxClaimable))
