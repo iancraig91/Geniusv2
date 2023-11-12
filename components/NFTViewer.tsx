@@ -13,7 +13,7 @@ export default function NftViewer() {
 
     return (
         <div>
-            {address && Number(ownedNfts?.length) > 1 ?
+            {address && Number(ownedNfts?.length) >= 1 ?
                 (
                     <SimpleGrid columns={{ base: 1, md: 3, lg: 4 }} p={2} spacing={2} gap={2}>
                         {ownedNfts?.map((nft, index) => (
