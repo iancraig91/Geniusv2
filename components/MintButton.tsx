@@ -135,7 +135,7 @@ export default function MintButton() {
         <VStack maxW={"100%"}>
             <Heading textColor={"black"} >{data && data2 ? `${(Number(data2))?.toString()}/6969` : <Spinner />}</Heading>
             {userPrice === 0 ?
-                (ownedNfts && ownedNfts?.length >= freeClaims ?
+                (ownedNfts && Number(ownedNfts?.length) >= freeClaims ?
 
                     <VStack>
                         <Text>You have all ready claimed {freeClaims} For Free!</Text>
