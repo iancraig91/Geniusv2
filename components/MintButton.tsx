@@ -32,7 +32,7 @@ export default function MintButton() {
     const [mintingMax, setMintingMax] = useState(false)
     const [claimerInfo, setClaimerInfo] = useState<NftInfo>()
     const [userPrice, setUserPrice] = useState(69)
-    const [freeClaims, setFreeClaims] = useState(0)
+    const [freeClaims, setFreeClaims] = useState()
     const toast = useToast();
 
     const { contract: nftMint } = useContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop")
@@ -54,7 +54,7 @@ export default function MintButton() {
                         setUserPrice(69)
                     } else if (claimerProofs && claimerProofs?.price) {
                         setUserPrice(Number(claimerProofs?.price))
-                    } else if (claimerProofs && Number(claimerProofs?.maxClaimable) >= 1) {
+                    } else if (claimerProofs && claimerProofs?.maxClaimable) {
                         setUserPrice(Number(0))
                         setFreeClaims(Number(claimerProofs?.maxClaimable))
                     }
@@ -65,7 +65,7 @@ export default function MintButton() {
         };
 
         fetchData();
-    }, [address, sdk]);
+    }, []);
 
 
     async function mint() {
@@ -73,12 +73,8 @@ export default function MintButton() {
             setMinting(true)
             try {
                 const contract = await sdk?.getContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop")
-                if (userPrice === 0) {
-                    const txResult = await contract?.erc721.claim(freeClaims);
-
-                } else {
-                    const txResult = await contract?.erc721.claim(amount);
-                }
+                    const txResult = await contract?.erc721.claim(freeClaims >= 1 ? freeClaims : amount );
+                
                 setMinting(false)
             } catch (error) {
                 console.error(error)
