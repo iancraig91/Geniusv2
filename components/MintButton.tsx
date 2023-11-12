@@ -33,6 +33,8 @@ export default function MintButton() {
     const [claimerInfo, setClaimerInfo] = useState<NftInfo>()
     const [userPrice, setUserPrice] = useState(69)
     const [freeClaims, setFreeClaims] = useState(0)
+    const [unclaimable, setUnclaimable] = useState(true)
+    const [loadingData, setLoadingData] = useState(false)
     const toast = useToast();
 
     const { contract: nftMint } = useContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop")
@@ -40,7 +42,6 @@ export default function MintButton() {
     const { data: data } = useUnclaimedNFTSupply(nftMint)
     const { data: data2 } = useClaimedNFTSupply(nftMint)
     const { data: ownedNfts } = useOwnedNFTs(nftMint, address)
-
     function showChakraToast(status: "success" | "error", description: string) {
         toast({
             title: status === 'success' ? 'Success' : 'Error',
@@ -54,30 +55,50 @@ export default function MintButton() {
     useEffect(() => {
         const fetchData = async () => {
             if (address) {
+                setLoadingData(true)
+                setUserPrice(69)
+                setFreeClaims(0)
                 try {
                     const contract = await sdk?.getContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop");
                     const claimerProofs = await contract?.erc721.claimConditions.getClaimerProofs(
                         address
                     );
-                    console.log(claimerProofs)
-                    setClaimerInfo(claimerProofs);
-                    if (claimerProofs === null) {
+                    if (claimerProofs && claimerProofs === undefined) {
                         setUserPrice(69)
+                        setUnclaimable(false)
+                        setClaimerInfo(claimerProofs);
+                        setLoadingData(false)
+
                     } else if (claimerProofs && claimerProofs?.price) {
                         setUserPrice(Number(claimerProofs?.price))
                         setFreeClaims(Number(claimerProofs?.maxClaimable))
+                        setUnclaimable(false)
+                        setClaimerInfo(claimerProofs);
+                        setLoadingData(false)
+
                     } else if (claimerProofs && claimerProofs?.maxClaimable) {
                         setUserPrice(Number(0))
                         setFreeClaims(Number(claimerProofs?.maxClaimable))
+                        setUnclaimable(false)
+                        setClaimerInfo(claimerProofs);
+                        setLoadingData(false)
+
+                    } else if (claimerProofs && claimerProofs === null) {
+                        setClaimerInfo(claimerProofs);
+                        setLoadingData(false)
+
                     }
+                    setLoadingData(false)
                 } catch (error) {
                     console.error("Error fetching data:", error);
+                    setLoadingData(false)
+
                 }
+                setLoadingData(false)
             }
         };
-
         fetchData();
-    }, []);
+    }, [address, data2]);
 
 
     async function mint() {
@@ -132,59 +153,74 @@ export default function MintButton() {
     }
 
     return (
-        <VStack maxW={"100%"}>
-            <Heading textColor={"black"} >{data && data2 ? `${(Number(data2))?.toString()}/6969` : <Spinner />}</Heading>
-            {userPrice === 0 ?
-                (ownedNfts && Number(ownedNfts?.length) >= freeClaims ?
-
-                    <VStack>
-                        <Text>You have all ready claimed {freeClaims} For Free!</Text>
-                    </VStack>
-                    :
-                    <VStack>
-                        <Text>Mint {freeClaims} For Free!</Text>
-                        <Button size={"lg"} bgGradient="linear(to-l, white, #fbdb4c)" textAlign={"center"} border={"2px"} borderColor={"black"} p={4} borderRadius={"xl"} onClick={mint} isLoading={minting}>{minting ? "Minting now" : `Mint ${freeClaims} NFT${freeClaims > 1 ? "'s" : ""} now!`}</Button>
-                    </VStack>
-                )
+        <VStack maxW={"100%"} textColor={"black"}>
+            {loadingData ?
+                <Spinner />
                 :
+                <VStack textColor={"black"}>
+                    <Heading textColor={"black"} >{data && data2 ? `${(Number(data2) - 1)?.toString()}/6969` : <Spinner />}</Heading>
+                    {userPrice === 0 ?
+                        (ownedNfts && Number(ownedNfts?.length) >= freeClaims ?
 
-                <VStack>
+                            <VStack textColor={"black"}>
+                                <Text>You have already claimed {freeClaims} For Free!</Text>
+                            </VStack>
+                            :
+                            <VStack textColor={"black"}>
+                                <Text>Mint {freeClaims} For Free!</Text>
+                                <Button size={"lg"} bgGradient="linear(to-l, white, #fbdb4c)" textAlign={"center"} border={"2px"} borderColor={"black"} p={4} borderRadius={"xl"} onClick={mint} isLoading={minting}>{minting ? "Minting now" : `Mint ${freeClaims} NFT${freeClaims > 1 ? "'s" : ""} now!`}</Button>
+                            </VStack>
+                        )
+                        :
+                        (unclaimable === true ?
 
-                    <Text>Total: {userPrice * amount} CRO</Text>
-                    <Input bg="white" value={friend} placeholder="Enter an address to mint to!" onChange={(e) => setFriend(e.target.value)} />
-                    <Button w="60%" fontSize={"10px"} size={"md"} bgGradient="linear(to-l, white, #fbdb4c)" textAlign={"center"} border={"2px"} borderColor={"black"} p={4} borderRadius={"xl"} onClick={mintFriend} isLoading={mintingFriend}>{mintingFriend ? "Minting now" : `Mint ${amount} NFT${amount > 1 ? "'s" : ""} to a friend now!`}</Button>
-                    <Divider />
-                    <Button size={"lg"}
-                        bgGradient="linear(to-r, white, #fbdb4c)"
-                        textAlign={"center"}
-                        border={"2px"}
-                        borderColor={"black"}
-                        p={4}
-                        borderRadius={"xl"}
-                        onClick={mintMax}
-                        isLoading={mintingMax}>{mintingMax ? "Minting now" : `MAX MINT`}</Button>
-                    <Divider />
+                            <VStack textColor={"black"}>
+                                <Text>You are not able to mint right now, please try again later!</Text>
+                            </VStack>
+                            :
+                            <VStack textColor={"black"}>
 
-                    <HStack m="auto" textAlign={"center"} justifyContent={"center"} >
-                        <Button
-                            size={"lg"}
-                            bg="transparent"
-                            leftIcon={<FaArrowLeft color="black" />}
-                            border={"2px"}
-                            borderColor={"black"}
-                            onClick={() => setAmount(amount >= 2 ? amount - 1 : 1)} />
+                                <Text>Total: {userPrice * amount} CRO</Text>
+                                <Input bg="linear(to-r, white, #fbdb4c)" color="black" borderColor={"black"} border="1px" value={friend} textColor={"black"} placeholder="Enter an address to mint to!" onChange={(e) => setFriend(e.target.value)} />
+                                <Button w="60%" fontSize={"10px"} textColor={"black"} size={"md"} bgGradient="linear(to-l, white, #fbdb4c)" textAlign={"center"} border={"2px"} borderColor={"black"} p={4} borderRadius={"xl"} onClick={mintFriend} isLoading={mintingFriend}>{mintingFriend ? "Minting now" : `Mint ${amount} NFT${amount > 1 ? "'s" : ""} to a friend now!`}</Button>
+                                <Divider />
+                                <Button size={"lg"}
+                                    textColor={"black"}
+                                    bgGradient="linear(to-r, white, #fbdb4c)"
+                                    textAlign={"center"}
+                                    border={"2px"}
+                                    borderColor={"black"}
+                                    p={4}
+                                    borderRadius={"xl"}
+                                    onClick={mintMax}
+                                    isLoading={mintingMax}>{mintingMax ? "Minting now" : `MAX MINT`}</Button>
+                                <Divider />
 
-                        <Button size={"lg"} bgGradient="linear(to-l, white, #fbdb4c)" textAlign={"center"} border={"2px"} borderColor={"black"} p={4} borderRadius={"xl"} onClick={mint} isLoading={minting}>{minting ? "Minting now" : `Mint ${amount} NFT${amount > 1 ? "'s" : ""} now!`}</Button>
+                                <HStack m="auto" textAlign={"center"} justifyContent={"center"} >
+                                    <Button
+                                        size={"lg"}
+                                        bg="transparent"
+                                        leftIcon={<FaArrowLeft color="black" />}
+                                        border={"2px"}
+                                        borderColor={"black"}
+                                        onClick={() => setAmount(amount >= 2 ? amount - 1 : 1)} />
 
-                        <Button
-                            size={"lg"}
-                            bg="transparent"
-                            rightIcon={<FaArrowRight color="black" />}
-                            border={"2px"} borderColor={"black"}
-                            onClick={() => setAmount(amount + 1)} />
-                    </HStack>
+                                    <Button size={"lg"} textColor={"black"} bgGradient="linear(to-l, white, #fbdb4c)" textAlign={"center"} border={"2px"} borderColor={"black"} p={4} borderRadius={"xl"} onClick={mint} isLoading={minting}>{minting ? "Minting now" : `Mint ${amount} NFT${amount > 1 ? "'s" : ""} now!`}</Button>
+
+                                    <Button
+                                        size={"lg"}
+                                        textColor={"black"}
+                                        bg="transparent"
+                                        rightIcon={<FaArrowRight color="black" />}
+                                        border={"2px"} borderColor={"black"}
+                                        onClick={() => setAmount(amount + 1)} />
+                                </HStack>
+                            </VStack>
+                        )
+                    }
                 </VStack>
             }
+
         </VStack>
     )
 }
