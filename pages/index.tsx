@@ -13,7 +13,7 @@ const Home: NextPage = () => {
   const address = useAddress();
   const chainId = useChainId();
   const switchChain = useSwitchChain();
- 
+
 
   if (!address) {
     return (
@@ -98,7 +98,7 @@ const Home: NextPage = () => {
       </VStack>
     )
   }
-  
+
 
   return (
     <main className={styles.main}>
@@ -106,7 +106,7 @@ const Home: NextPage = () => {
         <MintInfo />
         <MintButton />
 
-        <VStack mt={10} as={Switch} onChange={() => setIsShowing(isShowing ? !isShowing : true)}><Text mt={2}>{isShowing ? "Hide NFT's" : "View NFT's"}</Text> </VStack>
+        <VStack mt={10} as={Switch} textColor="black" onChange={() => setIsShowing(isShowing ? !isShowing : true)}><Text mt={2}>{isShowing ? "Hide NFT's" : "View NFT's"}</Text> </VStack>
         {isShowing ?
           <VStack mt={10}>
             <NftViewer />
