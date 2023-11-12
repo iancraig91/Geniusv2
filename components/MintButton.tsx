@@ -32,7 +32,7 @@ export default function MintButton() {
     const [mintingMax, setMintingMax] = useState(false)
     const [claimerInfo, setClaimerInfo] = useState<NftInfo>()
     const [userPrice, setUserPrice] = useState(69)
-    const [freeClaims, setFreeClaims] = useState()
+    const [freeClaims, setFreeClaims] = useState(0)
     const toast = useToast();
 
     const { contract: nftMint } = useContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop")
