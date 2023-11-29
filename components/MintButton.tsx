@@ -33,7 +33,7 @@ export default function MintButton() {
     const [claimerInfo, setClaimerInfo] = useState<NftInfo>()
     const [userPrice, setUserPrice] = useState(69)
     const [freeClaims, setFreeClaims] = useState(0)
-    const [unclaimable, setUnclaimable] = useState(true)
+    const [unclaimable, setUnclaimable] = useState(false)
     const [loadingData, setLoadingData] = useState(false)
     const toast = useToast();
 
@@ -77,7 +77,7 @@ export default function MintButton() {
                         setLoadingData(false)
 
                     } else if (claimerProofs && claimerProofs?.maxClaimable) {
-                        setUserPrice(Number(0))
+                        setUserPrice(Number(claimerProofs?.price))
                         setFreeClaims(Number(claimerProofs?.maxClaimable))
                         setUnclaimable(false)
                         setClaimerInfo(claimerProofs);
@@ -87,7 +87,13 @@ export default function MintButton() {
                         setClaimerInfo(claimerProofs);
                         setLoadingData(false)
 
+                    } else if (claimerProofs && claimerProofs === null) {
+                        setUserPrice(69)
+                        setUnclaimable(false)
+                        setClaimerInfo(claimerProofs);
+                        setLoadingData(false)
                     }
+                    console.log(claimerProofs)
                     setLoadingData(false)
                 } catch (error) {
                     console.error("Error fetching data:", error);
@@ -172,8 +178,8 @@ export default function MintButton() {
                             </VStack>
                         )
                         :
-                        (unclaimable === true ?
 
+                        (unclaimable === true ?
                             <VStack textColor={"black"}>
                                 <Text>You are not able to mint right now, please try again later!</Text>
                             </VStack>
@@ -216,6 +222,7 @@ export default function MintButton() {
                                         onClick={() => setAmount(amount + 1)} />
                                 </HStack>
                             </VStack>
+
                         )
                     }
                 </VStack>
