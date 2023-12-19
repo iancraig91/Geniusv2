@@ -37,7 +37,7 @@ export default function MintButton() {
     const [loadingData, setLoadingData] = useState(false)
     const toast = useToast();
 
-    const { contract: nftMint } = useContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop")
+    const { contract: nftMint } = useContract("0x26ba6Bd9436cf2BE636b32cCf40b1c3843c6ac13", "nft-drop")
 
     const { data: data } = useUnclaimedNFTSupply(nftMint)
     const { data: data2 } = useClaimedNFTSupply(nftMint)
@@ -59,7 +59,7 @@ export default function MintButton() {
                 setUserPrice(69)
                 setFreeClaims(0)
                 try {
-                    const contract = await sdk?.getContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop");
+                    const contract = await sdk?.getContract("0x26ba6Bd9436cf2BE636b32cCf40b1c3843c6ac13", "nft-drop");
                     const claimerProofs = await contract?.erc721.claimConditions.getClaimerProofs(
                         address
                     );
@@ -111,7 +111,7 @@ export default function MintButton() {
         if (address) {
             setMinting(true)
             try {
-                const contract = await sdk?.getContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop")
+                const contract = await sdk?.getContract("0x26ba6Bd9436cf2BE636b32cCf40b1c3843c6ac13", "nft-drop")
                 const txResult = await contract?.erc721.claim(freeClaims >= 1 ? freeClaims : amount);
                 showChakraToast("success", "You have succesfully minted your NFT")
                 setMinting(false)
@@ -127,7 +127,7 @@ export default function MintButton() {
         if (address && friend) {
             setMintingFriend(true)
             try {
-                const contract = await sdk?.getContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop")
+                const contract = await sdk?.getContract("0x26ba6Bd9436cf2BE636b32cCf40b1c3843c6ac13", "nft-drop")
                 const txResult = await contract?.erc721.claimTo(
                     friend,
                     amount,
@@ -146,7 +146,7 @@ export default function MintButton() {
         if (address) {
             setMintingMax(true)
             try {
-                const contract = await sdk?.getContract("0x5DAf5C61cb6FC86aBBaf3129040e74f8011fbb2D", "nft-drop")
+                const contract = await sdk?.getContract("0x26ba6Bd9436cf2BE636b32cCf40b1c3843c6ac13", "nft-drop")
                 const txResult = await contract?.erc721.claim(maxAmount);
                 showChakraToast("success", "You have succesfully Minted your NFTs")
                 setMintingMax(false)
